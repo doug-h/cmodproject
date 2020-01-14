@@ -1,0 +1,44 @@
+goals 
+input- 2 files:
+       file containing particle information
+       file containing simulation information
+
+methods and variables:
+        reuse particle3D
+        Grav. force method (2xparticle instance --> force vector(floats))
+        Grav. potential method (2xparticle instance --> energy float)
+	COM fix (list[particles])        
+        update velocities (list[particles])
+             for each particle, works out the sum of the forces due to 
+             all other particles and uses this to update velocity
+        update positions (list[particles])
+             for each particle use new velocity to update position
+        total energy (list[particles] --> energy float)
+             sums total potential and kinetic
+	VMD output ( --> VMD complient output)
+
+particle3D class:
+	same as before
+
+N-body sim class:
+        read input and create list[particles]
+        has velocity and update methods
+	COM fix
+	generic force/energy functions
+	total energy function
+	VMD output
+	
+
+planerary sim class:
+	inherits N-body sim
+	overwrites force/enrgy functions
+	
+
+output- orbital data:
+        apo/periapses
+        orbital period lengths
+        fuctuation in energy
+
+aesthetic
+
+--no code unless the algorithm you're using is new/complex--
