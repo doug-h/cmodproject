@@ -8,7 +8,7 @@ goals:
 input- 2 files:
        file containing particle information (name, mass, position, velocity),
         will be taken from http://ssd.jpl.nasa.gov/horizons.cgi (NASA system)
-       file containing simulation information (time_step, sim_length, initial time
+       file containing simulation information (time_step, sim_length, initial time)
 
 methods and variables:
         reuse particle3D
@@ -51,7 +51,7 @@ integration:
 output- orbital data:
         apo/periapses
         orbital period lengths
-        fuctuation in energy
+        fluctuation in energy
 
 aesthetic
 

@@ -4,7 +4,6 @@ Particle3D, a class to describe 3D particles
 
 import numpy as np
 
-
 class Particle3D(object):
     """
     Class to describe 3D particles.
@@ -98,31 +97,46 @@ class Particle3D(object):
         :return: particle instance if file only contains one particle.
                  array of particle instances if file contatins multiple.
         """
-        params = []
+        par_data = ['<label>', '<x-pos>', '<y-pos>', '<z-pos>', '<x-vel>', '<y-vel>', '<z-vel>', '<mass>']
+        # only used to give more helpful error messages to user
+        particles = []
         with open(fname, 'r') as f:
-            # only look at lines beginning with '#', and remove newline char
-            params = [line.rstrip() for line in f if line[0] == '#']
-            # seperate parameters and remove '#' character
-            params = [p.split()[1:] for p in params]
+            for linenumber, line in enumerate(f):
+                if line[0] != '#':
+                    continue #skip lines unless they start with #
+
+                params = line.split()[1:]
+
+                l = len(params)
+                if (l != 8):
+                    print("Warning - Line",linenumber + 1, "of", fname, 'was skipped:',
+                          l, "arguments given when 8 were expected.")
+                    print( 'Use form "#', ', '.join(par_data)+'".')
+                    print()
+                    continue #skip line if it has the wrong number of arguments
+
+                label = str(params[0])
+                try:
+                    for i in range(1, len(params)):
+                        params[i] = float(params[i])
+                except ValueError:
+                    print("Warning - Line",linenumber + 1, "of", fname, 'was skipped:',
+                          "unable to convert argument", i, "to float.")
+                    print()
+                    continue #skip line if it contains data the program doesn't understand
+
+                else:
+                    position = np.array(params[1:4])
+                    velocity = np.array(params[4:7])
+                    mass = float(params[7])
+                    particles.append(Particle3D(label, position, velocity, mass))
 
         f.close() #not strictly necessary as 'with open()' closes automatically
-
-        if len(params) == 0:
-            print("No particles found.")
-            print("Particles should be in form: '#' <x> <y> <z> ...")
-            return None
-        else:
-            particles = []
-            for p in params:
-                label = p[0]
-                position = np.array([float(r_i) for r_i in p[1:4]])
-                velocity = np.array([float(v_i) for v_i in p[4:7]])
-                mass = float(p[7])
-                particles.append(Particle3D(label, position, velocity, mass))
-            if len(particles) == 1:
-                return particles[0]
-            else:
-                return particles
+        
+        if len(particles) == 0:
+            print("Warning - No valid particles were found in", fname)
+            print()
+        return particles
 
     @staticmethod
     def seperation(p1, p2):
@@ -137,12 +151,13 @@ class Particle3D(object):
 
 if __name__ == "__main__":
     #Create particles for testing functions
-    for i in range(10):
+    """for i in range(10):
         p = Particle3D("p"+str(i),
                        np.array([2*i, 3*i, 5*i]),
                        np.array([7*i, 9*i, 11*i]),
                        13*i)
         print(p)
-
+    """
     x = Particle3D.from_file("param.txt")
-    print(x[0],x[1])
+    for p in x:
+        print(p)
