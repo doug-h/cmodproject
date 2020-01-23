@@ -8,14 +8,14 @@ ax = fig.add_subplot(111, projection='3d')
 
 ax.set_aspect('equal')
 
-ps = Particle3D.from_file("param.txt")
+ps = Particle3D.from_file("bodies.txt")
 
 X = np.array([p.position[0] for p in ps])
 Y = np.array([p.position[1] for p in ps])
 Z = np.array([p.position[2] for p in ps])
 
 for p in ps:
-    ax.scatter(*p.position, label = p.label, s=20)
+    ax.scatter(*p.position, label = p.label)
 
 # Create cubic bounding box to simulate equal aspect ratio
 max_range = np.array([X.max()-X.min(), Y.max()-Y.min(), Z.max()-Z.min()]).max()

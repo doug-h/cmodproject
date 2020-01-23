@@ -102,18 +102,18 @@ class Particle3D(object):
         particles = []
         with open(fname, 'r') as f:
             for linenumber, line in enumerate(f):
-                if line[0] != '#':
-                    continue #skip lines unless they start with #
 
-                params = line.split()[1:]
+                if line[0] != '#': #skip lines unless they start with '#'
+                    continue 
 
-                l = len(params)
-                if (l != 8):
+                params = line.split()[1:] #cuts line into list and drops '# char
+
+                if (len(params) != 8): #skip line if it has the wrong number of arguments
                     print("Warning - Line",linenumber + 1, "of", fname, 'was skipped:',
-                          l, "arguments given when 8 were expected.")
+                          len(params), "arguments given when 8 were expected.")
                     print( 'Use form "#', ', '.join(par_data)+'".')
                     print()
-                    continue #skip line if it has the wrong number of arguments
+                    continue 
 
                 label = str(params[0])
                 try:
@@ -126,8 +126,8 @@ class Particle3D(object):
                     continue #skip line if it contains data the program doesn't understand
 
                 else:
-                    position = np.array(params[1:4])
-                    velocity = np.array(params[4:7])
+                    position = np.array(params[1:4])*1e3
+                    velocity = np.array(params[4:7])*1e3
                     mass = float(params[7])
                     particles.append(Particle3D(label, position, velocity, mass))
 
@@ -138,15 +138,6 @@ class Particle3D(object):
             print()
         return particles
 
-    @staticmethod
-    def seperation(p1, p2):
-        """
-        Finds seperation between particles;
-        vector p2.pos - p1.pos
-
-        :param p1,p2: particles as Particle3D instances
-        """
-        return p2.position - p1.position
 
 
 if __name__ == "__main__":
@@ -158,6 +149,6 @@ if __name__ == "__main__":
                        13*i)
         print(p)
     """
-    x = Particle3D.from_file("param.txt")
+    x = Particle3D.from_file("bodies.txt")
     for p in x:
         print(p)
