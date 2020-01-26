@@ -46,14 +46,14 @@ class Particle3D(object):
         Outputs as "<label> <x-pos> <y-pos> <z-pos>"
         """
         LXYZ = ([self.label]
-                + [" " + str(x_i) for x_i in self.position])
-        return "".join(LXYZ)
+                + [str(x_i) for x_i in self.position])
+        return " ".join(LXYZ)
 
     def kinetic_energy(self):
         """
         :return: kinetic energy as float: 1/2*mass*|vel|^2
         """
-        return 0.5*self.mass*(self.velocity@self.velocity)
+        return 0.5*self.mass*((np.linalg.norm(self.velocity))**2)
 
     # Time integration methods
     def leap_velocity(self, dt, force):
@@ -65,15 +65,6 @@ class Particle3D(object):
         :param force: force on particle as numpy.array(float)
         """
         self.velocity += (dt/self.mass) * force
-
-    def leap_pos1st(self, dt):
-        """
-        First-order position update,
-        r(t+dt) = r(t) + dt*v(t)
-
-        :param dt: timestep as float
-        """
-        self.position += dt*self.velocity
 
     def leap_pos2nd(self, dt, force):
         """
@@ -104,7 +95,7 @@ class Particle3D(object):
             for linenumber, line in enumerate(f):
 
                 if line[0] != '#': #skip lines unless they start with '#'
-                    continue 
+                    continue
 
                 params = line.split()[1:] #cuts line into list and drops '# char
 
@@ -113,7 +104,7 @@ class Particle3D(object):
                           len(params), "arguments given when 8 were expected.")
                     print( 'Use form "#', ', '.join(par_data)+'".')
                     print()
-                    continue 
+                    continue
 
                 label = str(params[0])
                 try:
@@ -132,7 +123,7 @@ class Particle3D(object):
                     particles.append(Particle3D(label, position, velocity, mass))
 
         f.close() #not strictly necessary as 'with open()' closes automatically
-        
+
         if len(particles) == 0:
             print("Warning - No valid particles were found in", fname)
             print()
