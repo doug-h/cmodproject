@@ -4,15 +4,24 @@ import numpy as np
 G=6.67430e-11
 
 class PlanetSim(object):
-    def __init__(self, particle_list, dt=10, sim_time=315576, t0 = 0):
-          self.particle_list = particle_list
-          self.forces = np.zeros((len(particle_list),3))
-          self.dt = dt
-          self.t0 = t0
-          self.time = t0
-          self.sim_time = sim_time
-          self.tp = int(np.log10(sim_time) // 1) + 1
-          self.pos_file = None
+    def __init__(self, particle_list, dt=100, sim_time=31557600, t0 = 0):
+        """
+        Initialise a PlanetSim instance
+        
+        :param particle_list: list[Particle3D instances]
+        :param dt: timestep as float
+        :param sim_time: simulation length as float
+        :param t0: initial time as float
+        """
+        self.particle_list = particle_list
+        self.forces = np.zeros((len(particle_list),3))
+        self.dt = dt
+        self.t0 = t0
+        self.time = t0
+        self.sim_time = sim_time
+        
+        self.tp = int(np.log10(sim_time) // 1) + 1
+        self.pos_file = None
     """
      def COMfix(self):
           update particle_list

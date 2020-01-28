@@ -11,25 +11,26 @@ with open('out/orbit.dat', 'r') as f:
 
             f.close()
 
-colours = ['r','g','b']
-markers = [35,20,5]
-n=878
+colours = ['y','g','w', 'r', 'r','b','g','y']
+markers = [35,20,5,20,5,35,20,20]
+n=88
+planets = 8
 for i in range(n):
     fig = plt.figure(figsize=(9,9))
 
     ax = fig.add_subplot(111)
     ax.set_aspect('equal')
-    for j in range(3):
-        ax.scatter(*(ps[3*i+j]), label=ls[3*i+j], s=markers[j], c=colours[j])
+    for j in range(planets):
+        ax.scatter(*(ps[planets*i+j]), label=ls[planets*i+j], s=markers[j], c=colours[j])
 
     ax.set_xlabel('X Label')
     ax.set_ylabel('Y Label')
-    ax.set_xlim(-2e11,2e11)
-    ax.set_ylim(-2e11,2e11)
+    ax.set_xlim(-15e11,15e11)
+    ax.set_ylim(-15e11,15e11)
     ax.legend()
 
     filename='out/step'+("{:03d}".format(i))+'.png'
     plt.savefig(filename, dpi=64)
     plt.close()
-    if (a:=100*i/n)%5==0:
-        print(''.join([str(a),'%']))
+    #if (a:=100*i/n)%5==0:
+    #    print(''.join([str(a),'%']))
