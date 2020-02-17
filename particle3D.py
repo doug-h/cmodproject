@@ -23,7 +23,7 @@ class Particle3D(object):
     Static Methods:
     * create particle(s) from file
     """
-
+    template = {'label':(str,1), 'position':(float,3), 'velocity':(float,3), 'mass':(float,1)}
     def __init__(self, label, pos, vel, mass):
         """
         Initialise a Particle3D instance
@@ -68,65 +68,42 @@ class Particle3D(object):
     def leap_pos2nd(self, dt, force):
         """
         Second-order position update,
-        r(t+dt) = r(t) + dt*v(t) + 1/2*dt^2*F(t)
+        r(t+dt) = r(t) + dt*v(t) + 1/2*dt^2*F(t)/m
 
         :param dt: timestep as float
         :param force: force as numpy.array(float)
         """
         self.position += dt*self.velocity + ((0.5/self.mass)*(dt**2))*force
 
-    @staticmethod
-    def from_file(fname):
-        """
-        Creates particle(s) from file
-        Lines should start with '#' character then parameters in order:
-        # <label> <x-pos> <y-pos> <z-pos> <x-vel> <y-vel> <z-vel> <mass>
-
-        :param fname: filename as string
-
-        :return: array of particle instances.
-        """
-        par_data = ['<label>', '<x-pos>', '<y-pos>', '<z-pos>', '<x-vel>', '<y-vel>', '<z-vel>', '<mass>']
-        # only used to give more helpful error messages to user
+    @classmethod
+    def from_file(cls,fname):
+        print(cls.template)
         particles = []
         with open(fname, 'r') as f:
             for linenumber, line in enumerate(f):
-
                 if line[0] != '#': #skip lines unless they start with '#'
                     continue
-
                 params = line.split()[1:] #cuts line into list and drops '# char
+                args = []
+                for key in cls.template:
+                    d_type, d_len = cls.template[key]
+                    try:
+                        if d_len == 1:
+                            args += [d_type(params.pop(0))]
+                        else:
+                            args += [np.array([d_type(params.pop(0)) for _ in range(d_len)])]
+                    except ValueError:
+                        print("Warning - Line",linenumber + 1, "of", fname, 'was skipped:',
+                          "unable to convert argument to float.")
+                    except IndexError:
+                        print("Warning - Line",linenumber + 1, "of", fname, 'was skipped:',
+                          "incorrect number of arguments.")
 
-                if (len(params) != 8): #skip line if it has the wrong number of arguments
-                    print("Warning - Line",linenumber + 1, "of", fname, 'was skipped:',
-                          len(params), "arguments given when 8 were expected.")
-                    print( 'Use form "#', ', '.join(par_data)+'".')
-                    print()
-                    continue
-
-                label = str(params[0])
-                try:
-                    for i in range(1, len(params)):
-                        params[i] = float(params[i])
-                except ValueError:
-                    print("Warning - Line",linenumber + 1, "of", fname, 'was skipped:',
-                          "unable to convert argument", i, "to float.")
-                    print()
-                    continue #skip line if it contains data the program doesn't understand
-
-                else:
-                    position = np.array(params[1:4])*1e3
-                    velocity = np.array(params[4:7])*1e3
-                    mass = float(params[7])
-                    particles.append(Particle3D(label, position, velocity, mass))
-
-        f.close() #not strictly necessary as 'with open()' closes automatically
-
-        if len(particles) == 0:
-            print("Warning - No valid particles were found in", fname)
-            print()
+                p = cls(*args)
+                p.position *= 1e3 #Correct for units of km
+                p.velocity *= 1e3
+                particles += [p]
         return particles
-
 
 
 if __name__ == "__main__":
@@ -138,6 +115,6 @@ if __name__ == "__main__":
                        13*i)
         print(p)
     """
-    x = Particle3D.from_file("bodies.txt")
+    x = Particle3D.from_file("all.txt")
     for p in x:
         print(p)
