@@ -13,8 +13,8 @@ with open('out/orbit.dat', 'r') as f:
 
 colours = ['y','r','y','g','w','r','y','y','g','b']
 markers = [50,20,20,30,15,30,40,40,30,30]
-n=366
-planets = 3
+n=28
+planets = 10
 for i in range(n):
     fig = plt.figure(figsize=(9,9))
 
@@ -25,8 +25,8 @@ for i in range(n):
 
     ax.set_xlabel('X Label')
     ax.set_ylabel('Y Label')
-    ax.set_xlim(-5e11,5e11)
-    ax.set_ylim(-5e11,5e11)
+    ax.set_xlim(-5e12,5e12)
+    ax.set_ylim(-5e12,5e12)
     ax.legend()
 
     filename='out/step'+("{:03d}".format(i))+'.png'

@@ -8,13 +8,14 @@ class Planet(P3D):
     def __init__(self, label, pos, vel, mass, pri):
         super().__init__(label, pos, vel, mass)
         self.primary = pri
-        self.per = 0
+        self.per = 1e100
         self.apo = 0
-
-
+        self.esti_period = 0
+        self.period = 0
+        self.init_pos = np.copy(pos)*1e3
 
 class PlanetSim(object):
-    def __init__(self, planet_list, dt=60*60*24, sim_time=60*60*24*365, t0 = 0):
+    def __init__(self, planet_list, dt=60*60, sim_time=60*60*24*365*6, t0 = 0):
         """
         Initialise a PlanetSim instance
 
@@ -44,15 +45,6 @@ class PlanetSim(object):
         for p in self.planet_list:
             p.velocity -= v_com
 
-        """ # Calculate v_com again for testing
-            # should be << velocity of planets
-        P = np.zeros(3)
-        M = 0
-        for p in self.planet_list:
-            P += (p.mass * p.velocity)
-            M += p.mass
-        print(np.linalg.norm(P/M))"""
-
     def force(self, p0, p1):
         r_01 = p1.position - p0.position
         m_01 = np.linalg.norm(r_01)
@@ -73,6 +65,31 @@ class PlanetSim(object):
         for i,p_i in enumerate(self.planet_list):
             getattr(p_i, method)(self.dt, forces[i])
 
+    def calc_apsides(self):
+        for p in self.planet_list:
+                r = np.linalg.norm(p.position - self.planet_list[p.primary].position)
+                if r < p.per:
+                    p.per = r
+                if r > p.apo:
+                    p.apo = r
+
+    def esti_period(self):
+        for p in self.planet_list:
+            p.esti_period = 2*np.pi*((p.apo**3/(G*self.planet_list[p.primary].mass))**(1/2))/(60*60*24)
+
+    def calc_period(self,pos):
+        for i,p in enumerate(self.planet_list):
+            j0=0
+            for j in range(len(pos[i])-2):
+                if pos[i][j+1] < pos[i][j] and pos[i][j+2] > pos[i][j+1]:
+                    if j0:
+                        T = (j+1-j0)/24
+                        print(T)
+                        p.period += T
+                        if p.period != T:
+                            p.period /= 2
+                    j0 = j+1
+
     def kinetic_energy(self):
         K = 0
         for p in self.planet_list:
@@ -91,9 +108,15 @@ class PlanetSim(object):
 
         self.update_forces() #find initial forces
 
+        self.calc_apsides()
+
+        self.esti_period()
+
         pos_file = open('out/' + output, 'w')
 
         self.write_output(pos_file)
+
+        test = [[] for _ in range(len(self.planet_list))]
 
         for i in range(numstep):
             # save last forces for average
@@ -112,16 +135,16 @@ class PlanetSim(object):
             # Step forward time
             self.time += self.dt
 
-            if (i%(10)==0):
-                self.write_output(pos_file)
+            self.calc_apsides()
 
-        pos_file.close()
+            for j,p in enumerate(self.planet_list):
+                test[j] += [np.linalg.norm(p.position-p.init_pos-self.planet_list[p.primary].position)]
+        self.calc_period(test)
 
 
 if __name__ == "__main__":
     S = PlanetSim(Planet.from_file("all.txt"))
-    for p in S.planet_list:
-        print(p)
-        print(p.primary)
-    S.update_forces()
     S.run("orbit.dat")
+
+    for p in S.planet_list:
+        print(p.label,p.apo,p.per,p.esti_period,p.period)

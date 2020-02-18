@@ -77,7 +77,6 @@ class Particle3D(object):
 
     @classmethod
     def from_file(cls,fname):
-        print(cls.template)
         particles = []
         with open(fname, 'r') as f:
             for linenumber, line in enumerate(f):
