@@ -1,0 +1,58 @@
+goals: 
+       use N-body simulation to produce orbital information
+       for the solar system.
+       The simulation should include the planets, as well as Earth's moon,
+       Pluto and Halley's comet.
+       
+
+input- 2 files:
+       file containing particle information (name, mass, position, velocity),
+        will be taken from http://ssd.jpl.nasa.gov/horizons.cgi (NASA system)
+       file containing simulation information (time_step, sim_length, initial time)
+
+methods and variables:
+        reuse particle3D
+        Grav. force method (2xparticle instance --> force vector(floats))
+        Grav. potential method (2xparticle instance --> energy float)
+	COM fix (list[particles])        
+        update velocities (list[particles])
+             for each particle, works out the sum of the forces due to 
+             all other particles and uses this to update velocity
+        update positions (list[particles])
+             for each particle use new velocity to update position
+        total energy (list[particles] --> energy float)
+             sums total potential and kinetic
+	output trajectory( --> VMD complient trajectory output)
+	print(apo/periapses, period lengthn)
+	save fig for energy fluctuation?
+
+particle3D class:
+	same as before
+
+N-body sim class:
+        read input and create list[particles]
+	COM fix
+	generic force/energy functions
+	total energy function
+	VMD output
+	run_sim(infiles, outfile)
+	output energy fluctuations
+	
+planerary sim class:
+	inherits N-body sim
+	overwrites force/energy functions
+	calc apo/periapsis, orbit and print
+
+integration:
+	take description from exercise3
+	
+	
+
+output- orbital data:
+        apo/periapses
+        orbital period lengths
+        fluctuation in energy
+
+aesthetic
+
+--no code unless the algorithm you're using is new/complex--
