@@ -88,20 +88,20 @@ class Particle3D(object):
                     d_type, d_len = cls.template[key]
                     try:
                         if d_len == 1:
-                            args += [d_type(params.pop(0))]
+                            args.append(d_type(params.pop(0)))
                         else:
-                            args += [np.array([d_type(params.pop(0)) for _ in range(d_len)])]
+                            args.append(np.array([d_type(params.pop(0)) for _ in range(d_len)]))
                     except ValueError:
-                        print("Warning - Line",linenumber + 1, "of", fname, 'was skipped:',
-                          "unable to convert argument to float.")
+                        print("Warning - Line",linenumber + 1, "of", fname, ':',
+                          "unable to convert argument", key, "to", d_type, ".")
                     except IndexError:
-                        print("Warning - Line",linenumber + 1, "of", fname, 'was skipped:',
-                          "incorrect number of arguments.")
-
-                p = cls(*args)
-                p.position *= 1e3 #Correct for units of km
-                p.velocity *= 1e3
-                particles += [p]
+                        print("Warning - Line",linenumber + 1, "of", fname, ':',
+                          "not enough arguments given.")
+                try:
+                    p = cls(*args)
+                    particles.append(p)
+                except TypeError:
+                    print("Error:", '"' + args[0] + '"', "failed.")
         return particles
 
 

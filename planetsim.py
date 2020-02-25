@@ -1,21 +1,23 @@
 from particle3D import Particle3D as P3D
 import numpy as np
 
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+
 G=6.67430e-11
 
 class Planet(P3D):
+
     template = {'label':(str,1), 'position':(float,3), 'velocity':(float,3), 'mass':(float,1), 'primary':(int,1)}
+
     def __init__(self, label, pos, vel, mass, pri):
-        super().__init__(label, pos, vel, mass)
+        super().__init__(label, pos*1e3, vel*1e3, mass)
         self.primary = pri
-        self.per = 1e100
-        self.apo = 0
-        self.esti_period = 0
+        self.apo = self.per = -1
         self.period = 0
-        self.init_pos = np.copy(pos)*1e3
 
 class PlanetSim(object):
-    def __init__(self, planet_list, dt=60*60, sim_time=60*60*24*365*6, t0 = 0):
+    def __init__(self, planet_list):
         """
         Initialise a PlanetSim instance
 
@@ -26,13 +28,20 @@ class PlanetSim(object):
         """
         self.planet_list = planet_list
         self.forces = np.zeros((len(planet_list),3))
-        self.dt = dt
-        self.t0 = t0
-        self.time = t0
-        self.sim_time = sim_time
+        self.dt = 60*60
+        self.time = 0
+        self.sim_time = 60*60*24*365
 
-        self.tp = int(np.log10(sim_time) // 1) + 1
-        self.pos_file = None
+
+    def read_params(self,fname):
+        with open(fname, 'r') as f:
+            for linenumber, line in enumerate(f):
+                if line[0] != '#': #skip lines unless they start with '#'
+                    continue
+                params = line.split()[1:] #cuts line into list and drops '# char
+                params = [float(x) for x in params]
+
+        self.dt, self.sim_time, self.time, = params
 
     def COMfix(self):
         P = np.zeros(3)
@@ -41,7 +50,6 @@ class PlanetSim(object):
             P += (p.mass * p.velocity)
             M += p.mass
         v_com = P/M
-
         for p in self.planet_list:
             p.velocity -= v_com
 
@@ -49,6 +57,11 @@ class PlanetSim(object):
         r_01 = p1.position - p0.position
         m_01 = np.linalg.norm(r_01)
         return r_01*G*p0.mass*p1.mass*(m_01**-3)
+
+    def potential(self, p0, p1):
+        r_01 = p1.position - p0.position
+        m_01 = np.linalg.norm(r_01)
+        return -G*p0.mass*p1.mass/m_01
 
     def update_forces(self):
         #Calulate pairwise force interactions
@@ -67,58 +80,60 @@ class PlanetSim(object):
 
     def calc_apsides(self):
         for p in self.planet_list:
-                r = np.linalg.norm(p.position - self.planet_list[p.primary].position)
-                if r < p.per:
-                    p.per = r
-                if r > p.apo:
-                    p.apo = r
+            r = np.linalg.norm(p.position - self.planet_list[p.primary].position)
+            if p.per < 0:
+                p.per = r
+            elif r < p.per:
+                p.per = r
+            if p.apo < 0:
+                p.apo = r
+            elif r > p.apo:
+                p.apo = r
 
-    def esti_period(self):
-        for p in self.planet_list:
-            p.esti_period = 2*np.pi*((p.apo**3/(G*self.planet_list[p.primary].mass))**(1/2))/(60*60*24)
+    def estimated_period(self,p):
+        #estimate for the period using Kepler's 3rd Law
+        return 2*np.pi*((((p.apo+p.per)/2)**3/(G*(p.mass+self.planet_list[p.primary].mass)))**(1/2))/(60*60*24)
 
-    def calc_period(self,pos):
-        for i,p in enumerate(self.planet_list):
-            j0=0
-            for j in range(len(pos[i])-2):
-                if pos[i][j+1] < pos[i][j] and pos[i][j+2] > pos[i][j+1]:
-                    if j0:
-                        T = (j+1-j0)/24
-                        print(T)
-                        p.period += T
-                        if p.period != T:
-                            p.period /= 2
-                    j0 = j+1
-
-    def kinetic_energy(self):
-        K = 0
-        for p in self.planet_list:
-            K += p.kinetic_energy()
-        return K
-
-    def write_output(self, file):
-        for p in self.planet_list:
-            file.write('{:0{tp}d} {} \n'.format(self.time, p, tp = self.tp))
+    def energy(self):
+        E = 0
+        for i,p_i in enumerate(self.planet_list):
+            E += p_i.kinetic_energy()
+            for j,p_j in enumerate(self.planet_list):
+                if j > i:
+                    E += self.potential(p_i,p_j)
+        return E
 
     def run(self, output):
-        self.time = self.t0
         numstep = round(self.sim_time/self.dt)
+        N = len(self.planet_list)
 
         self.COMfix() #remove velocity of COM
-
         self.update_forces() #find initial forces
 
         self.calc_apsides()
 
-        self.esti_period()
+        vmd_file = open('out/' + output, 'w')
 
-        pos_file = open('out/' + output, 'w')
+        vmd_header = str(N) + '\n' + "Time = "
 
-        self.write_output(pos_file)
+        E0 = self.energy()
+        E=[]
 
-        test = [[] for _ in range(len(self.planet_list))]
 
+        s = np.zeros((N-1,3))
+        for j,p in enumerate(self.planet_list[1:]):
+            s[j] = p.position-self.planet_list[p.primary].position
+        pos =[[] for _ in self.planet_list[1:]]
         for i in range(numstep):
+            for j,p in enumerate(self.planet_list[1:]):
+                pos[j] += [np.linalg.norm(p.position-self.planet_list[p.primary].position-s[j])/np.linalg.norm(s[j])]
+
+            if i%24==0:
+                vmd_file.write(vmd_header + str(i*self.dt) + '\n')
+                for p in self.planet_list:
+                    vmd_file.write(str(p) + '\n')
+                print(round(100*i/numstep), '%')
+
             # save last forces for average
             old_forces = np.copy(self.forces)
 
@@ -137,14 +152,37 @@ class PlanetSim(object):
 
             self.calc_apsides()
 
-            for j,p in enumerate(self.planet_list):
-                test[j] += [np.linalg.norm(p.position-p.init_pos-self.planet_list[p.primary].position)]
-        self.calc_period(test)
+            E+=[self.energy()-E0]
+        xdata = np.array([k for k in range(numstep)])
 
+        e_fig = plt.figure()
+        plt.scatter(xdata,E)
+        plt.title("E(t)-E(t0)")
+
+
+        vmd_file.close()
+
+        fig = plt.figure(figsize=(12, 10))
+        for j,p in enumerate(self.planet_list[1:]):
+            xdata = np.array([k for k in range(len(pos[j]))])
+            ydata = pos[j]
+            n=round(np.sqrt(N))
+            fig.add_subplot(n,n,j+1)
+            plt.scatter(xdata,ydata,s=1)
+            plt.title(p.label)
+            pe = self.estimated_period(p)*(60*60*24)/self.dt
+            def pfunc(x,a,b,c): return a * np.absolute(np.sin(x*np.pi/b))**c
+            popt, pcov = curve_fit(pfunc, xdata,ydata, [2,pe,1])
+            p.period=(popt[1])*self.dt/(60*60*24)
+            plt.plot(xdata, pfunc(xdata, *popt), 'g',
+                label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt))
+            plt.legend()
+        plt.show()
 
 if __name__ == "__main__":
-    S = PlanetSim(Planet.from_file("all.txt"))
-    S.run("orbit.dat")
-
+    planets = Planet.from_file("all.txt")
+    S = PlanetSim(planets)
+    S.read_params("params.txt")
+    S.run("orbit.xyz")
     for p in S.planet_list:
-        print(p.label,p.apo,p.per,p.esti_period,p.period)
+        print(p.label,p.apo,p.per,S.estimated_period(p),p.period)

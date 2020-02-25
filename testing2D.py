@@ -2,19 +2,20 @@ import matplotlib.pyplot as plt
 
 ps = []
 ls = []
-with open('out/orbit.dat', 'r') as f:
+with open('out/orbit.xyz', 'r') as f:
             for linenumber, line in enumerate(f):
 
                 params = line.split()
-                ls.append(params[1])
-                ps.append([float(params[2]),float(params[3])])
+                if len(params) > 3:
+                    ls.append(params[0])
+                    ps.append([float(params[1]),float(params[2])])
 
             f.close()
 
 colours = ['y','r','y','g','w','r','y','y','g','b']
 markers = [50,20,20,30,15,30,40,40,30,30]
-n=28
-planets = 10
+n=365
+planets = 5
 for i in range(n):
     fig = plt.figure(figsize=(9,9))
 
@@ -25,8 +26,8 @@ for i in range(n):
 
     ax.set_xlabel('X Label')
     ax.set_ylabel('Y Label')
-    ax.set_xlim(-5e12,5e12)
-    ax.set_ylim(-5e12,5e12)
+    ax.set_xlim(-2e11,2e11)
+    ax.set_ylim(-2e11,2e11)
     ax.legend()
 
     filename='out/step'+("{:03d}".format(i))+'.png'
