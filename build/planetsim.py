@@ -60,8 +60,7 @@ class PlanetSim(object):
 
     def read_params(self,param_file):
         """
-        Read param file, extract parameters and return
-
+        Read param file, extract parameters and return.
         File in format: # <timestep> <duration> <initial time>
 
         :param param_file: parameter file name (string)
@@ -255,15 +254,16 @@ class PlanetSim(object):
         vmd_file.close()
 
         #Plot energy
-        """ 
-	xdata = [self.dt*x for x in range(len(E))]
+
+        xdata = [self.dt*x for x in range(len(E))]
         plt.plot(xdata,E)
-        plt.ylim(top=0.0005)
+        plt.ylim(top=0.001)
         plt.ylabel("Change in Energy(%)")
         plt.xlabel("Time(s)")
+        plt.tight_layout()
         plt.title("Percentage Change in Energy")
-        #plt.savefig("energy_fluctuations")
-	"""
+        plt.savefig("energy_fluctuations")
+
         # Calculate period
         for j,p in enumerate(self.planet_list[1:]):
             p.TCurve = self.curve_period(p,pos[j])
