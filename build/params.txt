@@ -1,0 +1,7 @@
+Units of seconds
+1d   = 86400
+1yr  = 31557600
+1 pluto orbit = 7824391344
+
+dt, simulation time, initial time:
+# 86400 315576000 0
