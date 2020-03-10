@@ -1,0 +1,120 @@
+*******************************************************************************
+JPL/HORIZONS                      1P/Halley                2020-Feb-28 09:57:53
+Rec #:90000033        Soln.date: 2001-Aug-02_13:51:39   # obs: 7428 (1835-1994)
+ 
+IAU76/J2000 helio. ecliptic osc. elements (au, days, deg., period=Julian yrs):
+ 
+  EPOCH=  2449400.5 ! 1994-Feb-17.0000000 (TDB)    RMSW= n.a.
+   EC= .9671429084623044   QR= .5859781115169086   TP= 2446467.3953170511
+   OM= 58.42008097656843   W= 111.3324851045177    IN= 162.2626905791606
+   A= 17.83414429255373    MA= 38.384264476436     ADIST= 35.08231047359055
+   PER= 75.315892782197    N= .013086564           ANGMOM= .01846886
+   DAN= 1.77839            DDN= .8527              L= 306.1250589
+   B= 16.4859355           MOID= .0637815          TP= 1986-Feb-05.8953170511
+ 
+Comet physical (GM= km^3/s^2; RAD= km):
+   GM= n.a.                RAD= 5.5
+   M1=  5.5      M2=  13.6     k1=  8.     k2=  5.      PHCOF=  .030
+ 
+Comet non-gravitational force model (AMRAT=m^2/kg;A1-A3=au/d^2;DT=days;R0=au):
+   AMRAT=  0.                                      DT=  0.
+   A1= 2.69646383822E-10   A2= 1.554613374174E-10  A3= 0.
+ Standard model:
+   ALN=  .1112620426   NK=  4.6142   NM=  2.15     NN=  5.093    R0=  2.808
+ 
+COMET comments 
+1: soln ref.= JPL#J863/77, data arc: 1835-08-21 to 1994-01-11
+2: k1=8.0, k2=5.0, phase coef.=0.03;
+*******************************************************************************
+ 
+ 
+*******************************************************************************
+Ephemeris / WWW_USER Fri Feb 28 09:57:53 2020 Pasadena, USA      / Horizons    
+*******************************************************************************
+Target body name: 1P/Halley                       {source: JPL#J863/77}
+Center body name: Solar System Barycenter (0)     {source: DE406}
+Center-site name: BODY CENTER
+*******************************************************************************
+Start time      : A.D. 2020-Jan-01 00:00:00.0000 TDB
+Stop  time      : A.D. 2020-Jan-02 00:00:00.0000 TDB
+Step-size       : 1440 minutes
+*******************************************************************************
+Center geodetic : 0.00000000,0.00000000,0.0000000 {E-lon(deg),Lat(deg),Alt(km)}
+Center cylindric: 0.00000000,0.00000000,0.0000000 {E-lon(deg),Dxy(km),Dz(km)}
+Center radii    : (undefined)                                                  
+Small perturbers: Yes                             {source: SB406-CPV-2}
+Output units    : KM-S                                                         
+Output type     : GEOMETRIC cartesian states
+Output format   : 3 (position, velocity, LT, range, range-rate)
+Reference frame : ICRF/J2000.0                                                 
+Coordinate systm: Ecliptic and Mean Equinox of Reference Epoch                 
+*******************************************************************************
+Initial IAU76/J2000 heliocentric ecliptic osculating elements (au, days, deg.):
+  EPOCH=  2449400.5 ! 1994-Feb-17.0000000 (TDB)    RMSW= n.a.                  
+   EC= .9671429084623044   QR= .5859781115169086   TP= 2446467.3953170511      
+   OM= 58.42008097656843   W= 111.3324851045177    IN= 162.2626905791606       
+  Equivalent ICRF heliocentric equatorial cartesian coordinates (au, au/d):
+   X=-1.394097492221407E+01  Y= 1.280566418073994E+01  Z=-6.838705058662126E-01
+  VX=-2.114527120886761E-03 VY= 3.184092376402889E-03 VZ= 2.042731155152628E-04
+Comet physical (GM= km^3/s^2; RAD= km):                                        
+   GM= n.a.                RAD= 5.5                                            
+   M1=  5.5      M2=  13.6     k1=  8.     k2=  5.      PHCOF=  .030           
+Comet non-gravitational force model (AMRAT=m^2/kg;A1-A3=au/d^2;DT=days;R0=au): 
+   AMRAT=  0.                                      DT=  0.                     
+   A1= 2.69646383822E-10   A2= 1.554613374174E-10  A3= 0.                      
+ Standard model:                                                               
+   ALN=  .1112620426   NK=  4.6142   NM=  2.15     NN=  5.093    R0=  2.808    
+*******************************************************************************
+JDTDB
+   X     Y     Z
+   VX    VY    VZ
+   LT    RG    RR
+*******************************************************************************
+$$SOE
+2458849.500000000 = A.D. 2020-Jan-01 00:00:00.0000 TDB 
+ X =-3.038507154418423E+09 Y = 3.978474612908638E+09 Z =-1.491688118119644E+09
+ VX= 3.759982021708061E-01 VY= 1.005875036593009E+00 VZ=-6.368394169328934E-02
+ LT= 1.742402931766814E+04 RG= 5.223592577407794E+09 RR= 5.655823276524344E-01
+2458850.500000000 = A.D. 2020-Jan-02 00:00:00.0000 TDB 
+ X =-3.038474657598936E+09 Y = 3.978561506665524E+09 Z =-1.491693615220138E+09
+ VX= 3.762429880722146E-01 VY= 1.005554521287580E+00 VZ=-6.356375542531290E-02
+ LT= 1.742419225949789E+04 RG= 5.223641426139445E+09 RR= 5.651753507132983E-01
+$$EOE
+*******************************************************************************
+Coordinate system description:
+
+  Ecliptic and Mean Equinox of Reference Epoch
+
+    Reference epoch: J2000.0
+    XY-plane: plane of the Earth's orbit at the reference epoch
+              Note: obliquity of 84381.448 arcseconds wrt ICRF equator (IAU76)
+    X-axis  : out along ascending node of instantaneous plane of the Earth's
+              orbit and the Earth's mean equator at the reference epoch
+    Z-axis  : perpendicular to the xy-plane in the directional (+ or -) sense
+              of Earth's north pole at the reference epoch.
+
+  Symbol meaning:
+
+    JDTDB    Julian Day Number, Barycentric Dynamical Time
+      X      X-component of position vector (km)                               
+      Y      Y-component of position vector (km)                               
+      Z      Z-component of position vector (km)                               
+      VX     X-component of velocity vector (km/sec)                           
+      VY     Y-component of velocity vector (km/sec)                           
+      VZ     Z-component of velocity vector (km/sec)                           
+      LT     One-way down-leg Newtonian light-time (sec)                       
+      RG     Range; distance from coordinate center (km)                       
+      RR     Range-rate; radial velocity wrt coord. center (km/sec)            
+
+Geometric states/elements have no aberrations applied.
+
+ Computations by ...
+     Solar System Dynamics Group, Horizons On-Line Ephemeris System
+     4800 Oak Grove Drive, Jet Propulsion Laboratory
+     Pasadena, CA  91109   USA
+     Information: http://ssd.jpl.nasa.gov/
+     Connect    : telnet://ssd.jpl.nasa.gov:6775  (via browser)
+                  http://ssd.jpl.nasa.gov/?horizons
+                  telnet ssd.jpl.nasa.gov 6775    (via command-line)
+     Author     : Jon.D.Giorgini@jpl.nasa.gov
+*******************************************************************************
