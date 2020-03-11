@@ -12,8 +12,13 @@ import sys
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
-#Value of G taken from CODATA 2018
-G=6.67430e-11
+# Value of G taken from CODATA 2018
+G = 6.67430e-11
+# Seconds per day
+s_per_d = 60*60*24
+# Seconds per (julian)year
+s_per_y = s_per_d*365.25
+
 
 class Planet(P3D):
     """
@@ -25,7 +30,11 @@ class Planet(P3D):
     apo/per(float) - apoapsis/periapsis of planet
     """
 
-    template = {'label':(str,1), 'position':(float,3), 'velocity':(float,3), 'mass':(float,1), 'primary':(int,1)}
+    template = {'label': (str,1),
+                'position': (float,3),
+                'velocity': (float,3),
+                'mass': (float,1),
+                'primary': (int,1)}
 
     def __init__(self, label, pos, vel, mass, pri):
         super().__init__(label, pos, vel, mass)
@@ -159,13 +168,13 @@ class PlanetSim(object):
                     minima_steps.append(i+1)
         N = len(minima_steps)
         if N > 0:
-            T = self.dt*((minima_steps[-1])/N)/(60*60*24)
+            T = self.dt*((minima_steps[-1])/N)/s_per_d
         return T
 
     def estimated_period(self,p):
         # Estimate for the period using Kepler's 3rd Law
         # Used to give a first estimate for the curve fitting method
-        return 2*np.pi*((((p.apo+p.per)/2)**3/(G*(p.mass+self.planet_list[p.primary].mass)))**(1/2))/(60*60*24)
+        return 2*np.pi*((((p.apo+p.per)/2)**3/(G*(p.mass+self.planet_list[p.primary].mass)))**(1/2))/s_per_d
 
     def curve_period(self,p,pos):
         # Fits the general function pfunc to the data stored in pos
@@ -173,12 +182,12 @@ class PlanetSim(object):
         try:
             xdata = np.array([k for k in range(len(pos))])
             ydata = pos
-            pe = self.estimated_period(p)*(60*60*24)/self.dt
+            pe = self.estimated_period(p)*s_per_d/self.dt
             def pfunc(x,a,b,c): return a * np.absolute(np.sin(x*np.pi/b))**c
 
             params, _ = curve_fit(pfunc, xdata, ydata, [2,pe,1], bounds = (0.1,np.inf))
 
-            return (params[1])*self.dt/(60*60*24)
+            return (params[1])*self.dt/s_per_d
         except RuntimeError:
             # Catch the error thrown by scipy if the curve fitting fails
             return 0
@@ -228,8 +237,8 @@ class PlanetSim(object):
                 for p in self.planet_list:
                     vmd_file.write(str(p) + '\n')
                 print(round(100*i/numstep), '%', end='\r')
-                #Calculate percentage change of the total energy
-            E.append(100*(self.energy()-E0)/E0)
+                # Calculate percentage change of the total energy
+                E.append(100*(self.energy()-E0)/E0)
 
             # Update particle position
             self.update_all('leap_pos2nd', self.forces)
@@ -245,6 +254,7 @@ class PlanetSim(object):
             for j,p in enumerate(self.planet_list[1:]):
                 # Save (scaled) distance of planet from initial position in orbit to calculate period
                 dist = np.linalg.norm(p.position-self.planet_list[p.primary].position-positions[j])
+                # distance is scaled to play better with curve-fitting algorithm
                 pos[j].append(dist/np.linalg.norm(positions[j]))
 
             # Step forward time
@@ -279,7 +289,8 @@ if __name__ == "__main__":
     S = PlanetSim(planet_f,param_f)
     S.run(traj_f)
     t1 = time.time()
-    print('Simulation completed in {:f}s: dt = {}s, time = {}s'.format(t1-t0, S.dt, S.time))
+    info = 'Simulation completed in {:f}s: dt = {}s, duration = {}s = {}d = {}y'
+    print(info.format(t1-t0, S.dt, S.time, round(S.time/s_per_d,1), round(S.time/s_per_y,2)))
 
     def print_table(table):
         #Neater console output of information

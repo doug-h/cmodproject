@@ -6,6 +6,7 @@ Douglas Hull & Jack Manners
 
 import numpy as np
 
+
 class Particle3D(object):
     """
     Class to describe 3D particles.
@@ -27,7 +28,10 @@ class Particle3D(object):
     """
 
     #Data template for reading from file
-    template = {'label':(str,1), 'position':(float,3), 'velocity':(float,3), 'mass':(float,1)}
+    template = {'label':(str,1),
+                'position':(float,3),
+                'velocity':(float,3),
+                'mass':(float,1)}
 
     def __init__(self, label, pos, vel, mass):
         """
