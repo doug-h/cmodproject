@@ -127,12 +127,12 @@ class Particle3D(object):
                     except IndexError:
                         print("Warning - Line",linenumber + 1, "of", fname, ':',
                           "not enough arguments given.")
-                try:
+                #try:
                     #Creates a particle using args
-                    p = cls(*args)
-                    particles.append(p)
-                except TypeError:
-                    print("Error:", '"' + args[0] + '"', "failed.")
+                p = cls(*args)
+                particles.append(p)
+                #except TypeError:
+                #    print("Error:", '"' + args[0] + '"', "failed.")
         f.close()
         return particles
 
