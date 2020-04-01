@@ -4,5 +4,5 @@ Units of seconds
 1 pluto orbit = 7824391344
 
 dt, simulation time, initial time:
-# 86400 31557600 0
+# 2592000 315576000 0
 

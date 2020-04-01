@@ -232,13 +232,16 @@ class PlanetSim(object):
         for i in range(numstep):
 
             # Write position information
-            if (i%10)==0:
+
+            if (i%1)==0:
                 vmd_file.write(vmd_header + str(i*self.dt) + '\n')
                 for p in self.planet_list:
                     vmd_file.write(str(p) + '\n')
                 print(round(100*i/numstep), '%', end='\r')
                 # Calculate percentage change of the total energy
                 E.append(100*(self.energy()-E0)/E0)
+
+
 
             # Update particle position
             self.update_all('leap_pos2nd', self.forces)
@@ -264,7 +267,7 @@ class PlanetSim(object):
         vmd_file.close()
 
         #Plot energy
-
+        """
         xdata = [self.dt*x for x in range(len(E))]
         plt.plot(xdata,E)
         plt.ylim(top=0.001)
@@ -273,10 +276,11 @@ class PlanetSim(object):
         plt.tight_layout()
         plt.title("Percentage Change in Energy")
         plt.savefig("energy_fluctuations")
+        """
 
         # Calculate period
         for j,p in enumerate(self.planet_list[1:]):
-            p.TCurve = self.curve_period(p,pos[j])
+            p.TCurve = 0#self.curve_period(p,pos[j])
             p.TCount = self.count_period(pos[j])
 
 if __name__ == "__main__":
@@ -309,3 +313,11 @@ if __name__ == "__main__":
 
     table.insert(0,headers)
     print_table(table)
+    """
+    for p in S.planet_list[1:]:
+        f=open("testing/"+str(p.label)+".csv", "a")
+        f.write(",".join([str(S.dt/s_per_d),str(p.apo),str(p.per),str(p.TCount)]))
+        f.write("\n")
+        f.close()
+    """
+
