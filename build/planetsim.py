@@ -232,7 +232,7 @@ class PlanetSim(object):
         for i in range(numstep):
 
             # Write position information
-
+            """
             if (i%1)==0:
                 vmd_file.write(vmd_header + str(i*self.dt) + '\n')
                 for p in self.planet_list:
@@ -240,7 +240,7 @@ class PlanetSim(object):
                 print(round(100*i/numstep), '%', end='\r')
                 # Calculate percentage change of the total energy
                 E.append(100*(self.energy()-E0)/E0)
-
+            """
 
 
             # Update particle position
@@ -320,4 +320,5 @@ if __name__ == "__main__":
         f.write("\n")
         f.close()
     """
+
 
