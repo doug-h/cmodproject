@@ -232,15 +232,15 @@ class PlanetSim(object):
         for i in range(numstep):
 
             # Write position information
-            """
+
             if (i%1)==0:
-                vmd_file.write(vmd_header + str(i*self.dt) + '\n')
-                for p in self.planet_list:
-                    vmd_file.write(str(p) + '\n')
+                #vmd_file.write(vmd_header + str(i*self.dt) + '\n')
+                #for p in self.planet_list:
+                #    vmd_file.write(str(p) + '\n')
                 print(round(100*i/numstep), '%', end='\r')
                 # Calculate percentage change of the total energy
-                E.append(100*(self.energy()-E0)/E0)
-            """
+                #E.append(100*(self.energy()-E0)/E0)
+
 
 
             # Update particle position
@@ -313,12 +313,12 @@ if __name__ == "__main__":
 
     table.insert(0,headers)
     print_table(table)
-    """
+
     for p in S.planet_list[1:]:
         f=open("testing/"+str(p.label)+".csv", "a")
         f.write(",".join([str(S.dt/s_per_d),str(p.apo),str(p.per),str(p.TCount)]))
         f.write("\n")
         f.close()
-    """
+
 
 
