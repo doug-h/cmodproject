@@ -2,7 +2,8 @@
 Code I wrote for the Computer Modelling (2019) course.
 Simulates the solar system to predict orbital information.
 
-Usage
+Usage:
+From within the build directory, type
 ```
 python planetsim.py planets.txt params.txt orbit.xyz
 ```
