@@ -27,11 +27,11 @@ class Particle3D(object):
     * create particle(s) from file
     """
 
-    #Data template for reading from file
-    template = {'label':(str,1),
-                'position':(float,3),
-                'velocity':(float,3),
-                'mass':(float,1)}
+    # Data template for reading from file
+    template = {'label': (str, 1),
+                'position': (float, 3),
+                'velocity': (float, 3),
+                'mass': (float, 1)}
 
     def __init__(self, label, pos, vel, mass):
         """
@@ -43,8 +43,8 @@ class Particle3D(object):
         :param mass: mass as float
         """
         self.label = label
-        self.position = pos*1e3
-        self.velocity = vel*1e3
+        self.position = pos * 1e3
+        self.velocity = vel * 1e3
         self.mass = mass
 
     def __str__(self):
@@ -59,7 +59,7 @@ class Particle3D(object):
         """
         Kinetic energy as float: 1/2*mass*|vel|^2
         """
-        return 0.5*self.mass*((np.linalg.norm(self.velocity))**2)
+        return 0.5 * self.mass * ((np.linalg.norm(self.velocity))**2)
 
     def leap_velocity(self, dt, force):
         """
@@ -69,7 +69,7 @@ class Particle3D(object):
         :param dt: timestep as float
         :param force: force on particle as numpy.array[float]
         """
-        self.velocity += (dt/self.mass) * force
+        self.velocity += (dt / self.mass) * force
 
     def leap_pos2nd(self, dt, force):
         """
@@ -79,66 +79,70 @@ class Particle3D(object):
         :param dt: timestep as float
         :param force: force as numpy.array(float)
         """
-        self.position += dt*self.velocity + ((0.5/self.mass)*(dt**2))*force
+        self.position += dt * self.velocity + \
+            ((0.5 / self.mass) * (dt**2)) * force
 
     @classmethod
-    def from_file(cls,fname):
+    def from_file(cls, fname):
         """
         Creates a list of particles using data from a file.
         The data's structure is given by the class variable 'template':
-        {'label':str, 'position':[float,3], 'velocity':[float,3], 'mass':[float,1]}
+        {'label':str,
+        'position':[float,3],
+        'velocity':[float,3],
+        'mass':[float,1]}
 
         :param fname: name of file containing particle data
         """
-
 
         particles = []
         with open(fname, 'r') as f:
             for linenumber, line in enumerate(f):
 
                 if line[0] != '#':
-                    #Skips lines unless they start with '#'
+                    # Skips lines unless they start with '#'
                     continue
 
                 # Cuts line into list and drops '#' char
                 params = line.split()[1:]
                 args = []
 
-                #Runs through each parameter in the template:
+                # Runs through each parameter in the template:
                 for key in cls.template:
-                    #Gets data type and length of the parameter
+                    # Gets data type and length of the parameter
                     d_type, d_len = cls.template[key]
                     try:
                         if d_len == 1:
-                            #Converts a single read-in value to the type
+                            # Converts a single read-in value to the type
                             # given in 'template'
                             arg = d_type(params.pop(0))
                             args.append(arg)
                         else:
-                            #Converts multiple read-in values to the type
+                            # Converts multiple read-in values to the type
                             # given in 'template' and stores in an np.array
-                            arg = np.array([d_type(params.pop(0)) for _ in range(d_len)])
+                            arg = np.array([d_type(params.pop(0))
+                                            for _ in range(d_len)])
                             args.append(arg)
 
-                    #Catching invalid input
+                    # Catching invalid input
                     except ValueError:
-                        print("Warning - Line",linenumber + 1, "of", fname, ':',
-                          "unable to convert argument", key, "to", d_type, ".")
+                        print("Warning - Line", linenumber + 1, "of", fname, ':',
+                              "unable to convert argument", key, "to", d_type, ".")
                     except IndexError:
-                        print("Warning - Line",linenumber + 1, "of", fname, ':',
-                          "not enough arguments given.")
-                #try:
-                    #Creates a particle using args
+                        print("Warning - Line", linenumber + 1, "of", fname, ':',
+                              "not enough arguments given.")
+                # try:
+                    # Creates a particle using args
                 p = cls(*args)
                 particles.append(p)
-                #except TypeError:
+                # except TypeError:
                 #    print("Error:", '"' + args[0] + '"', "failed.")
         f.close()
         return particles
 
 
 if __name__ == "__main__":
-    #Create particles for testing
+    # Create particles for testing
     x = Particle3D.from_file("all.txt")
     for p in x:
         print(p)

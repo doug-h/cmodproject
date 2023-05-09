@@ -19,7 +19,6 @@ s_per_d = 60*60*24
 # Seconds per (julian)year
 s_per_y = s_per_d*365.25
 
-
 class Planet(P3D):
     """
     Planet class, inherits the Particle3D class
