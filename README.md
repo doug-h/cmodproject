@@ -1,5 +1,5 @@
 # cmodproject
-Code I wrote for the Computer Modelling (2019).
+Code I wrote for the Computer Modelling (2019) course.
 Simulates the solar system to predict orbital information.
 
 Usage
